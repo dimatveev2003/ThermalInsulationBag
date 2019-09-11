@@ -1,0 +1,270 @@
+﻿<Window x:Class="ThermalInsulationBag.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ThermalInsulationBag"
+        mc:Ignorable="d"
+        Title="Главная" Height="520" Width="700" ResizeMode="CanMinimize">
+
+    <Window.Resources>
+        <Style TargetType="MenuItem" x:Key="MenuItemSt">
+            <Setter Property="Background" Value="#9B9B9B"/>
+            <Setter Property="BorderBrush" Value="#9B9B9B"/>
+        </Style>
+        <Style TargetType="TextBox" x:Key="TextBoxSt">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Width" Value="95"/>
+            <Setter Property="MinHeight" Value="25"/>
+            <Setter Property="IsReadOnly" Value="True"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid Background="#EFEFEF">
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Menu Background="#9B9B9B" Height="20" VerticalAlignment="Top" Grid.ColumnSpan="4">
+            <MenuItem VerticalAlignment="Center" Header="Меню" Height="20">
+                <MenuItem Style="{StaticResource MenuItemSt}" x:Name="DbEdit" Header="База материалов" Click="DbEditClick"/>
+                <MenuItem IsEnabled="False" Style="{StaticResource MenuItemSt}" x:Name="Graphic" Header="Вывод графиков" Click="GraphicClick"/>
+            </MenuItem>
+        </Menu>
+        <Border Grid.Row="1" Grid.ColumnSpan="2" Margin="2, 42, 2, 2" x:Name="ModeChecks">
+            <StackPanel>
+                <WrapPanel>
+                    <CheckBox Name="LossModeCheck" Margin="0, 7" Content="Расчет тепловых потерь" IsChecked="{Binding LossMode}"></CheckBox>
+                </WrapPanel>
+                <WrapPanel>
+                    <CheckBox Checked="TimeModeCheckChecked" Name="TimeModeCheck" Margin="0, 7" Content="Расчет времени охлаждения" IsChecked="{Binding TimeMode}"></CheckBox>
+                </WrapPanel>
+            </StackPanel>
+        </Border>
+        <Border Margin="2" Grid.Row="2"  Grid.ColumnSpan="2">
+            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                <Button Name="StartSimulate" Content="Запустить расчет" Click="StartSimulateClick"></Button>
+                <Button Name="WriteFile"  Content="Сохранить в файл" Click="WriteFileClick"></Button>
+            </StackPanel>
+        </Border>
+
+        <Border Name="materialInf" Margin="2, 22, 2, 50" Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="2">
+            <WrapPanel Orientation="Vertical">
+                <WrapPanel Margin="3">
+                    <Label MinWidth="65" Content="Название" ToolTip="Название материала"/>
+                    <TextBox Style="{StaticResource TextBoxSt}" ToolTip="{Binding Name}" Text="{Binding Name}"/>
+                </WrapPanel>
+                <WrapPanel Margin="3">
+                    <Label MinWidth="65" Content="Произв." ToolTip="Производитель материала"/>
+                    <TextBox Style="{StaticResource TextBoxSt}" ToolTip="{Binding Manufacturer}" Text="{Binding Manufacturer}"/>
+                </WrapPanel>
+                <WrapPanel Margin="3">
+                    <Label MinWidth="65" Content="Форма" ToolTip="Форма поставки"/>
+                    <TextBox Style="{StaticResource TextBoxSt}" ToolTip="{Binding DeliveryForm}" Text="{Binding DeliveryForm}"/>
+                </WrapPanel>
+                <WrapPanel Margin="3">
+                    <Label MinWidth="65" Content="Тип" ToolTip="Тип материала"/>
+                    <TextBox Style="{StaticResource TextBoxSt}" ToolTip="{Binding MaterialType}" Text="{Binding MaterialType}"/>
+                </WrapPanel>
+                <WrapPanel Margin="3">
+                    <Label MinWidth="65" Content="λ" ToolTip="Коэффициент теплопроводности"/>
+                    <TextBox Style="{StaticResource TextBoxSt}" ToolTip="{Binding ThermalConductivity}" Width="50" Text="{Binding ThermalConductivity}"/>
+                    <Label Content="Вт/м^2"/>
+                </WrapPanel>
+                <WrapPanel Margin="3">
+                    <Label MinWidth="65" Content="Толщина" ToolTip="Толщина материала"/>
+                    <TextBox Style="{StaticResource TextBoxSt}" Width="50" ToolTip="{Binding Width}" Text="{Binding Width}"/>
+                    <Label Content="мм"/>
+                </WrapPanel>
+            </WrapPanel>
+        </Border>
+
+        <GroupBox Margin="0, 20, 0, 0"  Grid.Column="2" Grid.ColumnSpan="2" Grid.RowSpan="3" Background="#EFEFEF" BorderThickness="3" BorderBrush="#727272">
+            <GroupBox.Header>Входные параметры</GroupBox.Header>
+            <WrapPanel HorizontalAlignment="Center" Orientation="Vertical" x:Name="InputParameters">
+                <WrapPanel Margin="3">
+                    <Label MinWidth="37" Content="L" ToolTip="Длина сумки"/>
+                    <TextBox PreviewTextInput="BoxPreviewTextInput" x:Name="bagLen" MinWidth="30" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Validation.ErrorTemplate="{StaticResource validationFailed}">
+                        <TextBox.Text>
+                            <Binding Path="Length">
+                                <Binding.ValidationRules>
+                                    <ExceptionValidationRule/>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+                    <Label Content="м"/>
+                </WrapPanel>
+                <WrapPanel Margin="3">
+                    <Label MinWidth="37" Content="W" ToolTip="Ширина сумки"/>
+                    <TextBox PreviewTextInput="BoxPreviewTextInput" x:Name="bagWid" MinWidth="30" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Validation.ErrorTemplate="{StaticResource validationFailed}">
+                        <TextBox.Text>
+                            <Binding Path="Width">
+                                <Binding.ValidationRules>
+                                    <ExceptionValidationRule/>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+                    <Label Content="м"/>
+                </WrapPanel>
+                <WrapPanel Margin="3">
+                    <Label MinWidth="37" Content="H" ToolTip="Высота сумки"/>
+                    <TextBox PreviewTextInput="BoxPreviewTextInput" x:Name="bagHigh" MinWidth="30" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Validation.ErrorTemplate="{StaticResource validationFailed}">
+                        <TextBox.Text>
+                            <Binding Path="Height">
+                                <Binding.ValidationRules>
+                                    <ExceptionValidationRule/>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+                    <Label Content="м"/>
+                </WrapPanel>
+                <WrapPanel Margin="3">
+                    <Label MinWidth="37" Content="Tatm" ToolTip="Температура окружающей среды"/>
+                    <TextBox PreviewTextInput="BoxPreviewTextInput" x:Name="tempOut" MinWidth="30" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Validation.ErrorTemplate="{StaticResource validationFailed}">
+                        <TextBox.Text>
+                            <Binding Path="TempOut">
+                                <Binding.ValidationRules>
+                                    <ExceptionValidationRule/>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+                    <Label Content="°С"/>
+                </WrapPanel>
+                <WrapPanel Margin="3">
+                    <Label MinWidth="35" Content="Tbag" ToolTip="Температура внутри сумки"/>
+                    <TextBox PreviewTextInput="BoxPreviewTextInput" x:Name="tempIn" MinWidth="30" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Validation.ErrorTemplate="{StaticResource validationFailed}">
+                        <TextBox.Text>
+                            <Binding Path="TempIn">
+                                <Binding.ValidationRules>
+                                    <ExceptionValidationRule/>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+                    <Label Content="°С"/>
+                </WrapPanel>
+                <WrapPanel Margin="3">
+                    <Label MinWidth="37" Content="α1" ToolTip="Коэффициент теплоотдачи с внутренней поверхности сумки"/>
+                    <TextBox PreviewTextInput="BoxPreviewTextInput" x:Name="coef1" MinWidth="30" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Validation.ErrorTemplate="{StaticResource validationFailed}">
+                        <TextBox.Text>
+                            <Binding Path="Coef1">
+                                <Binding.ValidationRules>
+                                    <ExceptionValidationRule/>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+                    <Label Content="Вт/м^2"/>
+                </WrapPanel>
+                <WrapPanel Margin="3">
+                    <Label MinWidth="37" Content="α2" ToolTip="Коэффициент теплоотдачи с внешней поверхности сумки"/>
+                    <TextBox PreviewTextInput="BoxPreviewTextInput" x:Name="coef2" MinWidth="30" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Validation.ErrorTemplate="{StaticResource validationFailed}">
+                        <TextBox.Text>
+                            <Binding Path="Coef2">
+                                <Binding.ValidationRules>
+                                    <ExceptionValidationRule/>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+                    <Label Content="Вт/м^2"/>
+                </WrapPanel>
+                <WrapPanel Margin="3">
+                    <Label MinWidth="30" Content="dt" ToolTip="Шаг по времени"/>
+                    <TextBox PreviewTextInput="BoxPreviewTextInput" x:Name="timeStep" MinWidth="30" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Validation.ErrorTemplate="{StaticResource validationFailed}">
+                        <TextBox.Text>
+                            <Binding Path="TimeStep">
+                                <Binding.ValidationRules>
+                                    <ExceptionValidationRule/>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+                    <Label Content="с"/>
+                </WrapPanel>
+                <WrapPanel Margin="3">
+                    <Label MinWidth="30" Content="γ" ToolTip="Степень заполнения сумки"/>
+                    <TextBox PreviewTextInput="BoxPreviewTextInput" x:Name="bagFilling" MinWidth="30" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Validation.ErrorTemplate="{StaticResource validationFailed}">
+                        <TextBox.Text>
+                            <Binding Path="BagFilling">
+                                <Binding.ValidationRules>
+                                    <ExceptionValidationRule/>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+                    <Label Content="м^3/м^3"/>
+                </WrapPanel>
+                <WrapPanel Margin="3">
+                    <Label MinWidth="30" Content="Cin" ToolTip="Теплоемкость содержимого сумки"/>
+                    <TextBox PreviewTextInput="BoxPreviewTextInput" x:Name="heatCapacityInBag" MinWidth="30" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Validation.ErrorTemplate="{StaticResource validationFailed}">
+                        <TextBox.Text>
+                            <Binding Path="HeatCapacityInBag">
+                                <Binding.ValidationRules>
+                                    <ExceptionValidationRule/>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+                    <Label Content="Дж/(кг·К) "/>
+                </WrapPanel>
+                <WrapPanel Margin="3">
+                    <Label MinWidth="30" Content="ρ" ToolTip="Плотность содержимого сумки"/>
+                    <TextBox PreviewTextInput="BoxPreviewTextInput" x:Name="bagDensity" MinWidth="30" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Validation.ErrorTemplate="{StaticResource validationFailed}">
+                        <TextBox.Text>
+                            <Binding Path="BagDensity">
+                                <Binding.ValidationRules>
+                                    <ExceptionValidationRule/>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+                    <Label Content="кг/м^3"/>
+                </WrapPanel>
+                <WrapPanel Margin="3">
+                    <Label MinWidth="30" Content="Tк" ToolTip="Конечная температура содержимого сумки"/>
+                    <TextBox PreviewTextInput="BoxPreviewTextInput" x:Name="finalTemp" MinWidth="30" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Validation.ErrorTemplate="{StaticResource validationFailed}">
+                        <TextBox.Text>
+                            <Binding Path="FinalTemp">
+                                <Binding.ValidationRules>
+                                    <ExceptionValidationRule/>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+                    <Label Content="°С"/>
+                </WrapPanel>
+                <WrapPanel Margin="3">
+                    <Label MinWidth="30" Content="Qh" ToolTip="Полезная мощность нагревательного элемента"/>
+                    <TextBox PreviewTextInput="BoxPreviewTextInput" x:Name="powerHeatElement" MinWidth="30" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Validation.ErrorTemplate="{StaticResource validationFailed}">
+                        <TextBox.Text>
+                            <Binding Path="PowerHeatElement">
+                                <Binding.ValidationRules>
+                                    <ExceptionValidationRule/>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+                    <Label Content="Вт"/>
+                </WrapPanel>
+            </WrapPanel>
+        </GroupBox>
+        <Border BorderThickness="3"  Grid.Row="3" Grid.RowSpan="2" Grid.ColumnSpan="4" BorderBrush="#727272" >
+            <TextBox VerticalScrollBarVisibility="Visible" Name="OutputBox" IsReadOnly="True" Margin="2" Background="White" Padding="10" TextWrapping="Wrap" BorderBrush="#727272" BorderThickness="3" Style="{DynamicResource TextBoxStyle1}"></TextBox>
+        </Border>
+    </Grid>
+</Window>

@@ -1,0 +1,34 @@
+﻿<Window x:Class="ThermalInsulationBag.DatabaseEditWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ThermalInsulationBag"
+        mc:Ignorable="d"
+        Title="Редактор БД" Height="450" Width="655" ResizeMode="CanMinimize">
+    
+    <Grid>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <DataGrid HorizontalContentAlignment="Stretch" AutoGenerateColumns="False" x:Name="materialsGrid">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Binding="{Binding Name}" Header="Название"/>
+                    <DataGridTextColumn Binding="{Binding Manufacturer}" Header="Производитель"/>
+                    <DataGridTextColumn Binding="{Binding DeliveryForm}" Header="Форма поставки"/>
+                    <DataGridTextColumn Binding="{Binding MaterialType}" Header="Тип материала"/>
+                    <DataGridTextColumn Binding="{Binding ThermalConductivity}" Header="λ, Вт/(м·К)"/>
+                    <DataGridTextColumn Binding="{Binding Width}" Header="Толщина, мм"/>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <StackPanel HorizontalAlignment="Center"  Grid.Row="1" Orientation="Horizontal">
+                <Button x:Name="selectButton" Content="Выбрать" Click="SelectButtonClick"></Button>
+                <Button x:Name="updateButton" Content="Обновить" Click="UpdateButtonClick" />
+                <Button x:Name="deleteButton" Content="Удалить" Click="DeleteButtonClick" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>
